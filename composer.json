@@ -8,10 +8,12 @@
       "email": "haitam@megatam.net"
     }
   ],
-  "minimum-stability": "stable",
+  "minimum-stability": "dev",
+  "homepage": "https://github.com/megatam/router",
+  "prefer-stable": true,
   "require": {
     "php": ">=7.2.0"
-  },
+  },s
   "autoload": {
     "psr-4": {
       "Megatam\\Router\\": ""
