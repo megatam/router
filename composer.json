@@ -1,0 +1,13 @@
+{
+    "name": "megatam/router",
+    "description": "PHP router , focus on performance",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Haitam Khalilieh",
+            "email": "haitam@megatam.net"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
