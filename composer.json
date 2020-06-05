@@ -8,6 +8,6 @@
             "email": "haitam@megatam.net"
         }
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "require": {}
 }
