@@ -9,86 +9,85 @@ class Router
     protected $universalRouteWasAdded;
     protected $routes;
 
-    protected function getRequestMethod(): string
-    {
-        return $_SERVER['REQUEST_METHOD'] ?? RequestMethods::GET;
-    }
-
-    protected function getRequestPath(): string
-    {
-        return parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-    }
 
     protected function callRoute($method, $route)
     {
-        $this->respone($this->routes[$method][$route]());
+        $this->response($this->routes[$method][$route]->call());
     }
 
-    protected function respone($response)
+    protected function response($response)
     {
         echo $response;
     }
 
-    public function get(string $route, $callback): void
+    public function get(string $route, $callback): Route
     {
-        $this->addRoute($route, $callback, RequestMethods::GET);
+        return $this->addRoute($route, $callback, RequestMethods::GET);
     }
 
-    public function post(string $route, $callback): void
+    public function post(string $route, $callback): Route
     {
-        $this->addRoute($route, $callback, RequestMethods::POST);
+        return $this->addRoute($route, $callback, RequestMethods::POST);
     }
 
-    public function addRoute(string $route, $callback, $requestMethod = RequestMethods::GET): void
+    public function addRoute(string $routeString, $callback, $requestMethod = RequestMethods::GET): Route
     {
 
-        $route = trim($route, '/');
-        if ($route == '*') {
+        $routeString = trim($routeString, '/');
+        if ($routeString == '*') {
             $this->universalRouteWasAdded = true;
         }
-
+        $route = new Route($routeString);
+        $route->setCallback($callback);
         if (is_array($requestMethod)) {
             foreach ($requestMethod as $r) {
-                $this->addRoute($route, $callback, $r);
+                $route->addMethod($r);
+                $this->routes[$r][$routeString] = &$route;
             }
         } else {
-            $this->routes[$requestMethod][$route] = $callback;
+            $route->addMethod($requestMethod);
+            $this->routes[$requestMethod][$routeString] = &$route;
         }
+        return $route;
+
+    }
+
+    private function initRequest()
+    {
+        return new Request();
     }
 
 
     public function dispatch()
     {
-        $method = $this->getRequestMethod();
-        $requestPath = $this->getRequestPath();
-        $cleanRoute = explode('/', trim($requestPath, '/'));
-        foreach ($this->routes[$method] as $route => $callback) {
+        $request = $this->initRequest();
+        foreach ($this->routes[$request->method] as $route => $callback) {
 
-            if ($this->routes[$method][$route]) {
-                $this->callRoute($method, $route);
+
+            if ($this->routes[$request->method][$route]) {
+                $this->callRoute($request->method, $route);
                 return;
             }
             $paremeters = [];
             $cleanPattern = explode('/', trim($route, '/'));
             $patternsCount = count($cleanPattern);
-
-            if (count($cleanRoute) !== $patternsCount) {
+            if (count($request->cleanPath) !== $patternsCount) {
                 continue;
             }
 
             for ($i = 0; $i < $patternsCount; $i++) {
                 if ($this->isParameter($cleanPattern[$i])) {
-                    $parameterName = $this->_matchParameterAndComponent($cleanRoute[$i], $cleanPattern[$i]);
+                    $parameterName = $this->_matchParameterAndComponent($request->cleanPath[$i], $cleanPattern[$i]);
 
                     // it's a parameter
                     if ($parameterName !== '') {
-                        $paremeters[$parameterName] = $cleanRoute[$i];
+                        $paremeters[$parameterName] = $request->cleanPath[$i];
                     } else {
                         continue;
                     }
                 } else {
                     // it's a static part of the route
-                    if ($cleanRoute[$i] !== $cleanPattern[$i]) {
+                    if ($request->cleanPath[$i] !== $cleanPattern[$i]) {
                         continue;
                     }
                 }
