@@ -32,4 +32,8 @@ class Route
 
     }
 
+    public function isMatch($path){
+
+    }
+
 }

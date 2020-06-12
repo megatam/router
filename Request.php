@@ -12,7 +12,7 @@ class Request
     public function __construct()
     {
         $this->method= $this->getRequestMethod();
-        $this->path = $this->getRequestPath();
+        $this->path = trim($this->getRequestPath(), '/');
         $this->cleanPath = explode('/', trim($this->path, '/'));
 
     }

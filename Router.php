@@ -61,38 +61,50 @@ class Router
     public function dispatch()
     {
         $request = $this->initRequest();
-        foreach ($this->routes[$request->method] as $route => $callback) {
+        if (isset($this->routes[$request->method][$request->path])) {
+            return $this->callRoute($request->method, $request->path);
+        }
 
 
-            if ($this->routes[$request->method][$route]) {
-                $this->callRoute($request->method, $route);
-                return;
+        foreach ($this->routes[$request->method] as $path => $route) {
+            if ($route->isMatch($request->path)) {
+                $this->callRoute($request->method, $path);
+                break;
             }
-            $paremeters = [];
-            $cleanPattern = explode('/', trim($route, '/'));
-            $patternsCount = count($cleanPattern);
-            if (count($request->cleanPath) !== $patternsCount) {
-                continue;
-            }
-
-            for ($i = 0; $i < $patternsCount; $i++) {
-                if ($this->isParameter($cleanPattern[$i])) {
-                    $parameterName = $this->_matchParameterAndComponent($request->cleanPath[$i], $cleanPattern[$i]);
-
-                    // it's a parameter
-                    if ($parameterName !== '') {
-                        $paremeters[$parameterName] = $request->cleanPath[$i];
-                    } else {
-                        continue;
-                    }
-                } else {
-                    // it's a static part of the route
-                    if ($request->cleanPath[$i] !== $cleanPattern[$i]) {
-                        continue;
-                    }
-                }
-            }
-
         }
     }
+}
+/*
+
+    if ($this->routes[$request->method][$route]) {
+        $this->callRoute($request->method, $route);
+        return;
+    }
+    $paremeters = [];
+    $cleanPattern = explode('/', trim($route, '/'));
+    $patternsCount = count($cleanPattern);
+    if (count($request->cleanPath) !== $patternsCount) {
+        continue;
+    }
+
+    for ($i = 0; $i < $patternsCount; $i++) {
+        if ($this->isParameter($cleanPattern[$i])) {
+            $parameterName = $this->_matchParameterAndComponent($request->cleanPath[$i], $cleanPattern[$i]);
+
+            // it's a parameter
+            if ($parameterName !== '') {
+                $paremeters[$parameterName] = $request->cleanPath[$i];
+            } else {
+                continue;
+            }
+        } else {
+            // it's a static part of the route
+            if ($request->cleanPath[$i] !== $cleanPattern[$i]) {
+                continue;
+            }
+        }
+    }
+
+}
+}
 }
