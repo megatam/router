@@ -67,8 +67,8 @@ class Router
 
 
         foreach ($this->routes[$request->method] as $path => $route) {
-            if ($route->isMatch($request->path)) {
-                $this->callRoute($request->method, $path);
+            if ($route->isMatch($request)) {
+                return $this->callRoute($request->method, $path);
                 break;
             }
         }

@@ -7,13 +7,13 @@ class Request
 {
     public $method;
     public $path;
-    public $cleanPath;
+    public $pathArr;
 
     public function __construct()
     {
         $this->method= $this->getRequestMethod();
         $this->path = trim($this->getRequestPath(), '/');
-        $this->cleanPath = explode('/', trim($this->path, '/'));
+        $this->pathArr = explode('/', trim($this->path, '/'));
 
     }
 
