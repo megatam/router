@@ -13,7 +13,7 @@
   "prefer-stable": true,
   "require": {
     "php": ">=7.2.0"
-  },s
+  },
   "autoload": {
     "psr-4": {
       "Megatam\\Router\\": ""
