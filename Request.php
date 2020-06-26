@@ -3,6 +3,8 @@
 namespace Megatam\Router;
 
 
+use Megatam\Router\Enums\RouterEnums;
+
 class Request
 {
     public $method;
@@ -13,6 +15,9 @@ class Request
     {
         $this->method= $this->getRequestMethod();
         $this->path = trim($this->getRequestPath(), '/');
+        if($this->path===''){
+            $this->path =  RouterEnums::HOMEPAGE;
+        }
         $this->pathArr = explode('/', trim($this->path, '/'));
 
     }

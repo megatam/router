@@ -10,7 +10,7 @@ class Router
     protected $routes;
 
 
-    protected function callRoute($method, $route)
+    public function callRoute($method, $route)
     {
         $this->response($this->routes[$method][$route]->call());
     }
@@ -32,11 +32,7 @@ class Router
 
     public function addRoute(string $routeString, $callback, $requestMethod = RequestMethods::GET): Route
     {
-
         $routeString = trim($routeString, '/');
-        if ($routeString == '*') {
-            $this->universalRouteWasAdded = true;
-        }
         $route = new Route($routeString);
         $route->setCallback($callback);
         if (is_array($requestMethod)) {
@@ -73,38 +69,4 @@ class Router
             }
         }
     }
-}
-/*
-
-    if ($this->routes[$request->method][$route]) {
-        $this->callRoute($request->method, $route);
-        return;
-    }
-    $paremeters = [];
-    $cleanPattern = explode('/', trim($route, '/'));
-    $patternsCount = count($cleanPattern);
-    if (count($request->cleanPath) !== $patternsCount) {
-        continue;
-    }
-
-    for ($i = 0; $i < $patternsCount; $i++) {
-        if ($this->isParameter($cleanPattern[$i])) {
-            $parameterName = $this->_matchParameterAndComponent($request->cleanPath[$i], $cleanPattern[$i]);
-
-            // it's a parameter
-            if ($parameterName !== '') {
-                $paremeters[$parameterName] = $request->cleanPath[$i];
-            } else {
-                continue;
-            }
-        } else {
-            // it's a static part of the route
-            if ($request->cleanPath[$i] !== $cleanPattern[$i]) {
-                continue;
-            }
-        }
-    }
-
-}
-}
 }

@@ -2,6 +2,7 @@
 
 namespace Megatam\Router;
 
+use Megatam\Router\Enums\RouterEnums;
 use Megatam\Router\Traits\RouterUtilsTrait;
 
 class Route
@@ -13,10 +14,14 @@ class Route
     public $route;
     private $_where;
     private $allowedTypes = ['number', 'string'];
+    private $parameters;
 
 
     public function __construct($route)
     {
+        if ($route === '') {
+            $route = RouterEnums::HOMEPAGE;
+        }
         $this->route = $route;
         $this->pathArr = explode('/', trim($route, '/'));
 
